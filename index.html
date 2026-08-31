@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفہیم المسائل مکمل</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ہیڈر -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <span class="logo-icon">📖</span>
+        <div class="titles">
+          <h1>تفہیم المسائل مکمل</h1>
+          <p class="subtitle">مفتیء اعظم پاکستان مفتی منیب الرحمٰن صاحب</p>
+        </div>
+      </div>
+
+      <!-- گلوبل سرچ بار -->
+      <div class="search-section">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="تلاش کریں ..." autocomplete="off">
+          <button id="searchBtn" title="تلاش کریں">
+            <span>تلاش</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- مین کنٹینٹ لے آؤٹ -->
+  <div class="app-body">
+    
+    <!-- سائڈبار: انڈیکس / فہرست مضامین -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <h3>فہرست مضامین (انڈیکس)</h3>
+        <p class="info-text">مخصوص جلد منتخب کر کے فہرست فلٹر کریں:</p>
+        <select id="volumeFilter">
+          <option value="all">تمام جلدیں (مکمل انڈیکس)</option>
+        </select>
+        <input type="text" id="indexSearchInput" placeholder="فہرست کے عنوانات میں تلاش..." class="index-filter-input">
+      </div>
+      <div class="index-list-container">
+        <ul id="indexList" class="index-list"></ul>
+      </div>
+    </aside>
+
+    <!-- مین کنٹینٹ ریڈر اور سرچ پینل -->
+    <main class="main-reader">
+      
+      <!-- سرچ رزلٹس باکس (ڈیفالٹ پوشیدہ) -->
+      <section id="searchResultsSection" class="search-panel" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h3 id="searchResultTitle">تلاش کے نتائج</h3>
+            <span id="searchStats" class="badge">0 نتائج ملے</span>
+          </div>
+          <button id="closeSearchBtn" class="close-btn" title="بند کریں">&times;</button>
+        </div>
+        <div id="resultsList" class="results-container"></div>
+      </section>
+
+      <!-- کتاب کا پیج ویور -->
+      <section class="reader-card">
+        
+        <!-- پیج ہیڈر میٹا -->
+        <div class="reader-meta">
+          <div class="meta-item">
+            <span class="meta-label">جلد:</span>
+            <select id="readerVolumeSelect" class="meta-select"></select>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">موجودہ صفحہ:</span>
+            <span id="pageBadge" class="badge-page">صفحہ ۱</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">کل صفحات:</span>
+            <span id="totalPagesBadge" class="badge-page">0</span>
+          </div>
+        </div>
+
+        <!-- کتاب کا متن -->
+        <div class="content-wrapper">
+          <div id="pageContent" class="page-text-area"></div>
+        </div>
+
+        <!-- پیج کنٹرولز اور نیویگیشن -->
+        <div class="reader-controls">
+          <button id="prevPageBtn" class="nav-btn">
+            <span class="arrow">→</span> پچھلا صفحہ
+          </button>
+
+          <div class="jump-box">
+            <span>صفحہ نمبر پر جائیں:</span>
+            <input type="number" id="jumpPageInput" min="1" placeholder="صفحہ">
+            <button id="jumpPageBtn">جائیں</button>
+          </div>
+
+          <button id="nextPageBtn" class="nav-btn">
+            اگلا صفحہ <span class="arrow">←</span>
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- تمام جلدوں کا الگ الگ ڈیٹا اور انڈیکس لوڈ کرنا -->
+  <script src="data/index_data.js"></script>
+  <script src="data/volumes/vol1.js"></script>
+  <script src="data/volumes/vol2.js"></script>
+  <script src="data/volumes/vol3.js"></script>
+  <script src="data/volumes/vol4.js"></script>
+  <script src="data/volumes/vol5.js"></script>
+  <script src="data/volumes/vol6.js"></script>
+  <script src="data/volumes/vol7.js"></script>
+  <script src="data/volumes/vol8.js"></script>
+  <script src="data/volumes/vol9.js"></script>
+  <script src="data/volumes/vol10.js"></script>
+  <script src="data/volumes/vol11.js"></script>
+  <script src="data/volumes/vol12.js"></script>
+  <script src="data/volumes/vol13.js"></script>
+  <script src="data/volumes/vol14.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
