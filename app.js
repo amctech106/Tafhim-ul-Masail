@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ۱. ایپ کی شروعات (Initialization)
   function initApp() {
     populateVolumeDropdowns();
-    renderIndexList('all', '');
+    // تبدیلی: ہارڈ کوڈڈ 'all' کی بجائے ڈراپ ڈاؤن کی موجودہ ویلیو پاس کی ہے
+    renderIndexList(volumeFilter.value, ''); 
     loadPage(currentVolume, currentPageNumber);
     setupEventListeners();
   }
@@ -59,8 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ۳. انڈیکس / فہرست کو رینڈر کرنا
   function renderIndexList(volFilterValue, searchText) {
-    indexList.innerHTML = '';
+    indexList.innerHTML = ''; // لسٹ کو پہلے خالی کریں
     
+    // ======== نیا اضافہ شروع ========
+    // اگر 'جلد منتخب کریں' (blank) سلیکٹ ہو تو آگے کا کوڈ نہ چلائیں
+    if (volFilterValue === 'blank') {
+      return; 
+    }
+    // ======== نیا اضافہ ختم ========
+
     let filtered = bookIndex;
     if (volFilterValue !== 'all') {
       filtered = filtered.filter(item => item.volume == volFilterValue);
