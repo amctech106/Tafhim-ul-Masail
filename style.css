@@ -36,6 +36,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+
 }
 
 .header-container {
@@ -62,6 +63,7 @@ body {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  margin: 5px;
 }
 
 .subtitle {
