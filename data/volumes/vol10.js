@@ -8,7 +8,8 @@ window.bookVolumes[10] = {
   pages: [
     {
       pageNumber: 1,
-      text:`[[heading:  تفہیم المسائل جلد دہم]]`
+      text:`[[heading:  تفہیم المسائل جلد دہم
+      10]]`
     },
     {
       pageNumber: 2,
