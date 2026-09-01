@@ -1,19 +1,43 @@
 @font-face {
   font-family: "Alvi Nastaleeq";
-  src: url("fonts/AlviNastaleeq.ttf") format("truetype");
+  src: url("fonts/Alvi%20Nastaleeq%20Regular.ttf") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Jameel Noori Nastaleeq";
-  src: url("fonts/JameelNooriNastaleeq.ttf") format("truetype");
+  src: url("fonts/Font_Jameel-Noori-Nastaleeq.ttf") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Al Mushaf";
-  src: url("fonts/AlMushaf.ttf") format("truetype");
+  src: url("fonts/Al_Mushaf.ttf") format("truetype");
   font-display: swap;
+}
+
+/* [[arabic: ...]] مارکر کے ذریعے نشان زد متن اس فونٹ اور اسٹائل میں دکھایا جائے گا */
+.arabic-text {
+  font-family: "Al Mushaf", "Alvi Nastaleeq", "Traditional Arabic", serif;
+  direction: rtl;
+  unicode-bidi: embed;
+  line-height:1px;
+}
+
+/* [[heading: ...]] مارکر کے ذریعے نشان زد متن ایک نمایاں سرخی کے طور پر دکھایا جائے گا */
+.page-heading {
+  display: block;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.3em;
+  color: var(--primary);
+  margin: 2px 0 2px 0;
+}
+
+/* ڈبل انٹر (خالی لائن) سے بننے والا نیا پیراگراف - پہلی سطر خودکار انڈینٹ ہوگی */
+.paragraph {
+  text-indent: 2em;
+  margin: 0 0 12px 0;
 }
 
 * {
@@ -396,35 +420,9 @@ body {
   text-align: justify;
   color: #1a202c;
   line-height: 2.5;
+  white-space: pre-wrap;
   min-height: 380px;
   word-break: break-word;
-}
-
-/* ہر صفحے کی ہیڈنگ (شروع میں یا درمیان میں) — سینٹر اور بولڈ */
-.page-heading {
-  text-align: center;
-  font-weight: 700;
-  font-size: 28px;
-  color: var(--primary);
-  margin: 5px 0 25px 0;
-  font-family: inherit;
-  line-height: 1.8;
-}
-
-/* وہ ہیڈنگ جو صفحے کے شروع میں نہیں بلکہ درمیان میں آتی ہے،
-   اسے اوپر کے پیراگراف سے تھوڑا الگ دکھانے کے لیے */
-.page-heading-mid {
-  margin-top: 35px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border-color);
-}
-
-.page-paragraph {
-  margin: 0 0 15px 0;
-}
-
-.page-paragraph:last-child {
-  margin-bottom: 0;
 }
 
 /* ریڈر نیویگیشن بٹنز */

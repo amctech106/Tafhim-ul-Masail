@@ -101,6 +101,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // مددگار فنکشن: [[heading: ...]] اور [[arabic: ...]] مارکر کو مناسب <span> میں بدلنا
+  // باقی متن کو HTML سے محفوظ (escape) رکھا جاتا ہے تاکہ کوئی اور کریکٹر مسئلہ نہ بنے
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // ایک پیراگراف کے اندر کا متن: heading/arabic مارکر پروسیس + escape + سنگل انٹر کو <br> میں بدلنا
+  function renderParagraphHtml(paragraphText) {
+    // فارمیٹ: [[heading: متن]] یا [[arabic: متن]] — شروع میں ٹیگ کا نام اور کولن، آخر میں ]]
+    const markerRegex = /\[\[(heading|arabic)\s*:([\s\S]*?)\]\]/g;
+    let result = '';
+    let lastIndex = 0;
+    let match;
+
+    while ((match = markerRegex.exec(paragraphText)) !== null) {
+      const tag = match[1];
+      const content = match[2].trim();
+
+      result += escapeHtml(paragraphText.slice(lastIndex, match.index));
+
+      if (tag === 'heading') {
+        result += `<span class="page-heading">${escapeHtml(content)}</span>`;
+      } else if (tag === 'arabic') {
+        result += `<span class="arabic-text">${escapeHtml(content)}</span>`;
+      }
+
+      lastIndex = markerRegex.lastIndex;
+    }
+    result += escapeHtml(paragraphText.slice(lastIndex));
+
+    // پیراگراف کے اندر ایک انٹر (سنگل نئی لائن) صرف سطر کا وقفہ ہے
+    result = result.replace(/\n/g, '<br>');
+    return result;
+  }
+
+  // پورے صفحے کا متن: ڈبل انٹر (خالی لائن) پر نیا پیراگراف بنتا ہے جو خودکار انڈینٹ ہوتا ہے
+  function renderPageText(rawText) {
+    const paragraphs = rawText.split(/\n{2,}/);
+    return paragraphs
+      .map(p => `<p class="paragraph">${renderParagraphHtml(p)}</p>`)
+      .join('');
+  }
+
   // ۴. مخصوص جلد اور صفحہ لوڈ کرنا
   function loadPage(volNum, pageNum) {
     const volData = window.bookVolumes[volNum];
@@ -122,50 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
     readerVolumeSelect.value = currentVolume;
     pageBadge.textContent = `صفحہ ${pageNum}`;
     totalPagesBadge.textContent = `${volData.pages.length} صفحات`;
-    pageContent.innerHTML = renderPageContent(pageObj);
+    pageContent.innerHTML = renderPageText(pageObj.text);
     jumpPageInput.value = pageNum;
-  }
-
-  // ۴-الف. HTML میں خاص کریکٹرز کو محفوظ بنانا (تاکہ متن ٹوٹے نہیں)
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
-
-  // ۴-ب. متن سے ہیڈنگ مارکرز نکال کر خالص متن دینا (سرچ اور جھلک کے لیے)
-  function stripHeadingMarkers(text) {
-    return text.replace(/\[\[heading:(.*?)\]\]/g, '$1');
-  }
-
-  // ۴-ج. صفحے کا HTML تیار کرنا: اوپر کی مرکزی ہیڈنگ + درمیان میں آنے والی ہیڈنگز
-  //      صفحے کے شروع کی ہیڈنگ کے لیے pageObj.heading میں لکھیں۔
-  //      متن کے درمیان جہاں ہیڈنگ آنی ہو وہاں لکھیں: [[heading: یہاں عنوان لکھیں]]
-  function renderPageContent(pageObj) {
-    let html = '';
-
-    // صفحے کے شروع کی مرکزی ہیڈنگ (اگر دی گئی ہو)
-    if (pageObj.heading) {
-      html += `<div class="page-heading">${escapeHtml(pageObj.heading)}</div>`;
-    }
-
-    // متن کو [[heading: ...]] مارکر پر تقسیم کریں
-    const parts = pageObj.text.split(/\[\[heading:(.*?)\]\]/g);
-
-    parts.forEach((part, index) => {
-      if (index % 2 === 1) {
-        // طاق نمبر پر ہمیشہ ہیڈنگ کا متن آئے گا (split کے قاعدے کی رُو سے)
-        if (part.trim()) {
-          html += `<div class="page-heading page-heading-mid">${escapeHtml(part.trim())}</div>`;
-        }
-      } else if (part.trim()) {
-        // عام پیراگراف متن
-        html += `<p class="page-paragraph">${escapeHtml(part).replace(/\n/g, '<br>')}</p>`;
-      }
-    });
-
-    return html;
   }
 
   // ۵. گلوبل سرچ فنکشن (تمام ۱۴ جلدوں اور ۱۰ ہزار صفحات میں برق رفتاری سے تلاش)
@@ -185,8 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!volData || !volData.pages) continue;
 
       volData.pages.forEach(pg => {
-        // سرچ اور جھلک کے لیے ہیڈنگ مارکرز ہٹا کر خالص متن استعمال کریں
-        const text = stripHeadingMarkers(pg.text);
+        const text = pg.text;
         const indexMatch = text.indexOf(query);
 
         if (indexMatch !== -1) {
@@ -195,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // سیاق و سباق (Snippet Preview)
           const start = Math.max(0, indexMatch - 40);
           const end = Math.min(text.length, indexMatch + query.length + 40);
-          let snippet = text.substring(start, end);
+          let snippet = text.substring(start, end).replace(/\[\[(heading|arabic)\s*:/g, '').replace(/\]\]/g, '');
           
           // ہائی لائٹ کرنا
           const highlightedSnippet = snippet.replace(
