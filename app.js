@@ -122,8 +122,50 @@ document.addEventListener('DOMContentLoaded', () => {
     readerVolumeSelect.value = currentVolume;
     pageBadge.textContent = `صفحہ ${pageNum}`;
     totalPagesBadge.textContent = `${volData.pages.length} صفحات`;
-    pageContent.textContent = pageObj.text;
+    pageContent.innerHTML = renderPageContent(pageObj);
     jumpPageInput.value = pageNum;
+  }
+
+  // ۴-الف. HTML میں خاص کریکٹرز کو محفوظ بنانا (تاکہ متن ٹوٹے نہیں)
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // ۴-ب. متن سے ہیڈنگ مارکرز نکال کر خالص متن دینا (سرچ اور جھلک کے لیے)
+  function stripHeadingMarkers(text) {
+    return text.replace(/\[\[heading:(.*?)\]\]/g, '$1');
+  }
+
+  // ۴-ج. صفحے کا HTML تیار کرنا: اوپر کی مرکزی ہیڈنگ + درمیان میں آنے والی ہیڈنگز
+  //      صفحے کے شروع کی ہیڈنگ کے لیے pageObj.heading میں لکھیں۔
+  //      متن کے درمیان جہاں ہیڈنگ آنی ہو وہاں لکھیں: [[heading: یہاں عنوان لکھیں]]
+  function renderPageContent(pageObj) {
+    let html = '';
+
+    // صفحے کے شروع کی مرکزی ہیڈنگ (اگر دی گئی ہو)
+    if (pageObj.heading) {
+      html += `<div class="page-heading">${escapeHtml(pageObj.heading)}</div>`;
+    }
+
+    // متن کو [[heading: ...]] مارکر پر تقسیم کریں
+    const parts = pageObj.text.split(/\[\[heading:(.*?)\]\]/g);
+
+    parts.forEach((part, index) => {
+      if (index % 2 === 1) {
+        // طاق نمبر پر ہمیشہ ہیڈنگ کا متن آئے گا (split کے قاعدے کی رُو سے)
+        if (part.trim()) {
+          html += `<div class="page-heading page-heading-mid">${escapeHtml(part.trim())}</div>`;
+        }
+      } else if (part.trim()) {
+        // عام پیراگراف متن
+        html += `<p class="page-paragraph">${escapeHtml(part).replace(/\n/g, '<br>')}</p>`;
+      }
+    });
+
+    return html;
   }
 
   // ۵. گلوبل سرچ فنکشن (تمام ۱۴ جلدوں اور ۱۰ ہزار صفحات میں برق رفتاری سے تلاش)
@@ -143,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!volData || !volData.pages) continue;
 
       volData.pages.forEach(pg => {
-        const text = pg.text;
+        // سرچ اور جھلک کے لیے ہیڈنگ مارکرز ہٹا کر خالص متن استعمال کریں
+        const text = stripHeadingMarkers(pg.text);
         const indexMatch = text.indexOf(query);
 
         if (indexMatch !== -1) {
