@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ایک پیراگراف کے اندر کا متن: heading/arabic مارکر پروسیس + escape + سنگل انٹر کو <br> میں بدلنا
   function renderParagraphHtml(paragraphText) {
     // فارمیٹ: [[heading: متن]] یا [[arabic: متن]] — شروع میں ٹیگ کا نام اور کولن، آخر میں ]]
-    const markerRegex = /\[\[(heading|arabic)\s*:([\s\S]*?)\]\]/g;
+   const markerRegex = /\[\[(heading|arabic|sher)\s*:([\s\S]*?)\]\]/g;
     let result = '';
     let lastIndex = 0;
     let match;
@@ -123,11 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const content = match[2].trim();
 
       result += escapeHtml(paragraphText.slice(lastIndex, match.index));
-
       if (tag === 'heading') {
         result += `<span class="page-heading">${escapeHtml(content)}</span>`;
       } else if (tag === 'arabic') {
         result += `<span class="arabic-text">${escapeHtml(content)}</span>`;
+      } else if (tag === 'sher') {
+        result += `<span class="verse-text">${escapeHtml(content)}</span>`;
       }
 
       lastIndex = markerRegex.lastIndex;

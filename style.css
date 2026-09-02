@@ -425,6 +425,15 @@ body {
   white-space: pre-wrap;
   min-height: 380px;
   word-break: break-word;
+   word-spacing: -1.3px;
+}
+
+.verse-text {
+  display: block;
+  text-align: center;
+  text-indent: 0;
+  line-height: 1.6;
+  margin-top: -25px;
 }
 
 /* ریڈر نیویگیشن بٹنز */
