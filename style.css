@@ -217,6 +217,10 @@ body {
   margin-bottom: 6px;
 }
 
+.sidebar.hide-mobile {
+    display: none;
+}
+
 .info-text {
   font-size: 14px;
   color: var(--text-muted);

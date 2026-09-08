@@ -90,13 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="topic-title">${item.topic}</span>
         <span class="index-meta-tag">جلد ${item.volume}، ص ${item.page}</span>
       `;
-      li.addEventListener('click', () => {
-        loadPage(item.volume, item.page);
-        // موبائل پر ہموار تجربے کے لیے اوپر اسکرول
-        if (window.innerWidth <= 900) {
-          window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
-      });
+     li.addEventListener('click', () => {
+
+    loadPage(item.volume, item.page);
+
+    if (window.innerWidth <= 900) {
+        document.querySelector('.sidebar').classList.add('hide-mobile');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+});
       indexList.appendChild(li);
     });
   }
