@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchResultTitle = document.getElementById('searchResultTitle');
   const searchStats = document.getElementById('searchStats');
   const closeSearchBtn = document.getElementById('closeSearchBtn');
+  const recentList = document.getElementById('recentList');
 
   // ۱. ایپ کی شروعات (Initialization)
   function initApp() {
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderIndexList(volumeFilter.value, ''); 
     loadPage(currentVolume, currentPageNumber);
     setupEventListeners();
+    renderRecentList();
   }
 
   // ۲. جلدوں کے ڈراپ ڈاؤن لسٹس بھرنا
@@ -90,16 +92,105 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="topic-title">${item.topic}</span>
         <span class="index-meta-tag">جلد ${item.volume}، ص ${item.page}</span>
       `;
-     li.addEventListener('click', () => {
+ li.addEventListener('click', () => {
+  loadPage(item.volume, item.page);
 
-    loadPage(item.volume, item.page);
+  // حالیہ پڑھے گئے سوالات میں شامل کریں
+  addToRecent(item);
 
-    if (window.innerWidth <= 900) {
-        document.querySelector('.sidebar').classList.add('hide-mobile');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  // موبائل پر Index Sidebar بند کریں
+  if (window.innerWidth <= 900) {
+    document.querySelector('.sidebar').classList.add('hide-mobile');
 
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 });
+
+const MAX_RECENT = 15;
+
+function addToRecent(item) {
+  let recent =
+    JSON.parse(localStorage.getItem('recentQuestions')) || [];
+
+  // اگر یہی سوال پہلے موجود ہے تو اسے نکال دیں
+  recent = recent.filter(q =>
+    !(q.volume == item.volume && q.page == item.page)
+  );
+
+  // نیا سوال سب سے اوپر شامل کریں
+  recent.unshift({
+    topic: item.topic,
+    volume: item.volume,
+    page: item.page
+  });
+
+  // زیادہ سے زیادہ 15 سوالات
+  recent = recent.slice(0, MAX_RECENT);
+
+  // Local Storage میں محفوظ کریں
+  localStorage.setItem(
+    'recentQuestions',
+    JSON.stringify(recent)
+  );
+
+  renderRecentList();
+}
+
+
+function renderRecentList() {
+  recentList.innerHTML = '';
+
+  const recent =
+    JSON.parse(localStorage.getItem('recentQuestions')) || [];
+
+  // ابھی کوئی سوال نہیں کھولا گیا
+  if (recent.length === 0) {
+    recentList.innerHTML = `
+      <li style="color:#888; text-align:center; cursor:default;">
+        ابھی کوئی سوال نہیں کھولا گیا
+      </li>
+    `;
+    return;
+  }
+
+  // Recent Questions دکھائیں
+  recent.forEach(item => {
+
+    const li = document.createElement('li');
+
+    li.innerHTML = `
+      <span class="recent-topic">${item.topic}</span>
+      <span class="recent-meta">
+        جلد ${item.volume}، ص ${item.page}
+      </span>
+    `;
+
+    li.addEventListener('click', () => {
+
+      // سوال کھولیں
+      loadPage(item.volume, item.page);
+
+      // دوبارہ کھولنے پر اسے سب سے اوپر لے آئیں
+      addToRecent(item);
+
+      // موبائل پر Recent Sidebar بند کریں
+      if (window.innerWidth <= 900) {
+        document.querySelector('.recent-sidebar')
+          .classList.add('hide-mobile');
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    });
+
+    recentList.appendChild(li);
+  });
+}
       indexList.appendChild(li);
     });
   }
