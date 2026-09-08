@@ -22,6 +22,79 @@ document.addEventListener('DOMContentLoaded', () => {
   const jumpPageBtn = document.getElementById('jumpPageBtn');
 
   const searchInput = document.getElementById('searchInput');
+  const voiceBtn = document.getElementById('voiceBtn');
+    // Voice Typing
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = 'ur-PK';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      voiceBtn.innerHTML = '🔴';
+    };
+
+    recognition.onresult = (event) => {
+
+      const transcript =
+        event.results[0][0].transcript;
+
+      searchInput.value = transcript;
+    };
+
+    recognition.onend = () => {
+
+      voiceBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+          <path d="M5 10a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+          <line x1="8" y1="22" x2="16" y2="22"></line>
+
+        </svg>
+      `;
+    };
+
+    recognition.onerror = (event) => {
+      console.log('Voice recognition error:', event.error);
+
+      voiceBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+          <path d="M5 10a7 7 0 0 0 14 0"></path>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+          <line x1="8" y1="22" x2="16" y2="22"></line>
+
+        </svg>
+      `;
+    };
+
+    voiceBtn.addEventListener('click', () => {
+      recognition.start();
+    });
+
+  } else {
+
+    voiceBtn.style.display = 'none';
+
+  }
   const searchBtn = document.getElementById('searchBtn');
   const searchResultsSection = document.getElementById('searchResultsSection');
   const resultsList = document.getElementById('resultsList');
