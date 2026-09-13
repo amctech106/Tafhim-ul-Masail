@@ -81,6 +81,10 @@ window.bookVolumes[12] = {
  
 
     {
+      pageNumber: 95,
+      text: `[[headin: طہارت کے مسائل]]`
+    },
+    {
       pageNumber: 5,
       text: ``
     },
